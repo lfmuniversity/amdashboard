@@ -179,23 +179,6 @@ tr:hover td{background:var(--s2)}
 .cmp-na{font-family:'Space Mono',monospace;font-size:9px;color:var(--dim)}
 canvas{max-width:100%}
 @media(max-width:900px){.kpi-row,.cov-row,.row-2,.row-3{grid-template-columns:1fr}main{padding:12px}}
-
-.subrow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:0}
-.subcard{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden}
-.subcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sc)}
-.sub-proj{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px}
-.sub-main{display:flex;align-items:flex-end;gap:12px;margin-bottom:10px}
-.sub-media{font-size:28px;font-weight:800;color:var(--text);line-height:1;letter-spacing:-1px}
-.sub-media-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:4px}
-.sub-comp{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;white-space:nowrap}
-.sub-comp.up{background:rgba(34,197,94,.15);color:#22c55e}
-.sub-comp.dn{background:rgba(239,68,68,.15);color:#ef4444}
-.sub-comp.flat{background:var(--dim);color:var(--muted)}
-.sub-sparkline{display:flex;align-items:flex-end;gap:2px;height:32px}
-.sub-bar{border-radius:2px 2px 0 0;min-width:4px;flex:1}
-@media(max-width:900px){.subrow{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.subrow{grid-template-columns:1fr}}
-
 </style>
 </head>
 <body>
@@ -255,14 +238,7 @@ canvas{max-width:100%}
 <main>
   <!-- KPI -->
   <div class="kpi-row">
-    <div class="kpi" style="--kpi-c:var(--c-xi)"><div class="kpi-lbl">Sell-Out Totale</div>
-  <div>
-    <div class="ctitle" style="margin-bottom:10px">
-      <span><span class="ctitle-dot"></span>Subtotale Media &mdash; vs Settimana Precedente</span>
-    </div>
-    <div class="subrow" id="subrow"></div>
-  </div>
-<div class="kpi-val" id="k-total">&mdash;</div><div class="kpi-sub">unit&agrave; nel periodo selezionato</div></div>
+    <div class="kpi" style="--kpi-c:var(--c-xi)"><div class="kpi-lbl">Sell-Out Totale</div><div class="kpi-val" id="k-total">&mdash;</div><div class="kpi-sub">unit&agrave; nel periodo selezionato</div></div>
     <div class="kpi" style="--kpi-c:var(--c-zte)"><div class="kpi-lbl">PDV Attivi</div><div class="kpi-val" id="k-pdv">&mdash;</div><div class="kpi-sub">punti vendita con SO &gt; 0</div></div>
     <div class="kpi" style="--kpi-c:var(--c-lghe)"><div class="kpi-lbl">Media per PDV</div><div class="kpi-val" id="k-avg">&mdash;</div><div class="kpi-sub">unit&agrave; medie / PDV attivo</div></div>
     <div class="kpi" style="--kpi-c:var(--c-lgha)"><div class="kpi-val" id="k-topval" style="font-size:18px;margin-top:4px">&mdash;</div><div class="kpi-lbl" style="margin-bottom:4px">Top PDV</div><div class="kpi-sub" id="k-topname" style="color:var(--text);font-size:9px">&mdash;</div></div>
@@ -781,71 +757,11 @@ function exportCSV(){
 document.getElementById('export-btn').addEventListener('click',exportCSV);
 
 // ── MAIN UPDATE ────────────────────────────────────────────────────
-
-const SUBTOTALI={"XIAOMI":{"media":{"1":8.99,"2":7.35,"3":6.63,"4":6.04,"5":5.51,"6":5.88,"7":6.24,"8":6.2,"9":5.76,"10":6.48,"11":6.53,"12":7.22,"13":6.39,"14":6.37,"15":7.06,"16":7.11},"comp":{"2":-0.1822,"3":-0.0982,"4":-0.0893,"5":-0.0881,"6":0.0669,"7":0.0613,"8":-0.0058,"9":-0.0717,"10":0.1255,"11":0.0087,"12":0.1053,"13":-0.1154,"14":-0.0022,"15":0.1082,"16":0.0061}},"ZTE":{"media":{"4":4.07,"5":4.14,"6":4.27,"7":4.67,"8":2.92,"9":3.78,"10":3.81,"11":4.6,"12":4.94,"13":4.72,"14":3.17,"15":3.79,"16":3.41},"comp":{"11":0.2072,"12":0.0749,"13":-0.0446,"14":-0.3288,"15":0.1948,"16":-0.0994}},"LG HE":{"media":{"4":3.68,"5":3.61,"6":3.69,"7":3.68,"8":3.5,"9":3.63,"10":3.5,"11":3.93,"12":3.33,"13":3.33,"14":2.59,"15":3.28,"16":2.98},"comp":{"11":0.1223,"12":-0.1519,"13":0.0006,"14":-0.2243,"15":0.2676,"16":-0.0897}},"LG HA":{"media":{"4":5.07,"5":4.47,"6":4.2,"7":4.57,"8":4.88,"9":4.13,"10":4.19,"11":4.41,"12":3.69,"13":3.1,"14":3.07,"15":4.09,"16":3.83},"comp":{"11":0.0516,"12":-0.1639,"13":-0.1579,"14":-0.0106,"15":0.3327,"16":-0.0637}}};
-
-function buildSubtotale(){
-  var projs=['XIAOMI','ZTE','LG HE','LG HA'];
-  var colors={XIAOMI:'#ff6b35',ZTE:'#00d4aa','LG HE':'#a855f7','LG HA':'#fbbf24'};
-  var wks=[...state.weeks].sort(function(a,b){return a-b;});
-  var lastW=wks[wks.length-1];
-
-  var el=document.getElementById('subrow');
-  if(!el)return;
-
-  el.innerHTML=projs.map(function(p){
-    var sd=SUBTOTALI[p];
-    if(!sd)return '';
-    var mediaAll=sd.media, compAll=sd.comp;
-
-    // Get values for selected weeks
-    var selMedia=wks.filter(function(w){return mediaAll[String(w)]!=null;})
-                    .map(function(w){return{w:w,v:mediaAll[String(w)]};});
-
-    var lastMedia=selMedia.length?selMedia[selMedia.length-1].v:null;
-    var lastComp=compAll[String(lastW)];
-    var col=colors[p]||'#3b82f6';
-
-    // Sparkline bars
-    var vals=selMedia.map(function(d){return d.v;});
-    var maxV=Math.max.apply(null,vals.concat([0.01]));
-    var minV=Math.min.apply(null,vals.concat([0]));
-    var range=maxV-minV||1;
-    var bars=selMedia.slice(-12).map(function(d){
-      var h=Math.max(8,Math.round(((d.v-minV)/range)*24));
-      var isLast=(d.w===lastW);
-      return '<div class="sub-bar" style="height:'+h+'px;background:'+(isLast?col:'rgba(255,255,255,0.1)')+'"></div>';
-    }).join('');
-
-    // Comp badge
-    var compBadge='<span class="sub-comp flat">n.d.</span>';
-    if(lastComp!=null){
-      var pct=(lastComp*100).toFixed(1);
-      var sign=lastComp>0.001?'+':'';
-      var cls=lastComp>0.001?'up':lastComp<-0.001?'dn':'flat';
-      var arrow=lastComp>0.001?'&#9650;':lastComp<-0.001?'&#9660;':'=';
-      compBadge='<span class="sub-comp '+cls+'">'+arrow+' '+sign+pct+'%</span>';
-    }
-
-    var mediaStr=lastMedia!=null?lastMedia.toFixed(2):'—';
-
-    return '<div class="subcard" style="--sc:'+col+'">'
-      +'<div class="sub-proj">'+p+'</div>'
-      +'<div class="sub-main">'
-      +'<div><div class="sub-media-lbl">Media pz/PDV &mdash; W'+lastW+'</div><div class="sub-media">'+mediaStr+'</div></div>'
-      +compBadge
-      +'</div>'
-      +'<div class="sub-sparkline">'+bars+'</div>'
-      +'</div>';
-  }).join('');
-}
-
 function update(){
   const fs=filteredStores();
   const sd=calcTotals(fs).sort((a,b)=>b.total-a.total);
   tableData=sd;
   updateKPIs(sd);
-  buildSubtotale();
   buildCOV(sd);
   buildAlerts(fs,sd);
   buildWvsW();
